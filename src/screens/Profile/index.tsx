@@ -22,7 +22,16 @@ export default function ProfileScreen(){
       }}
     >
       <Text>Profile</Text>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={handleLogout}
+        style={{
+          marginTop: 20,
+          padding: 10,
+          borderColor: "black",
+          borderWidth: 1,
+          borderRadius: 10
+        }}
+      >
         <Text>Logout</Text>
       </TouchableOpacity>
     </SafeAreaView>
