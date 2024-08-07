@@ -3,6 +3,7 @@ import { SafeAreaView, Text, TouchableOpacity } from "react-native";
 import localStorage from "../../database";
 import { NavigationProps } from "../../routes/stack.params";
 import { useNavigation } from "@react-navigation/native";
+import { Button } from "../../components/Button";
 
 export default function ProfileScreen(){
   const navigation = useNavigation<NavigationProps>();
@@ -22,7 +23,18 @@ export default function ProfileScreen(){
       }}
     >
       <Text>Profile</Text>
-      <TouchableOpacity
+      
+      <Button 
+        label="Logout" 
+        onPress={handleLogout} 
+        variant="default" 
+        size="lg"
+        style={{
+          marginTop: 20
+        }}
+      />
+
+      {/* <TouchableOpacity
         onPress={handleLogout}
         style={{
           marginTop: 20,
@@ -33,7 +45,7 @@ export default function ProfileScreen(){
         }}
       >
         <Text>Logout</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </SafeAreaView>
   );
 }
