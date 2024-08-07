@@ -8,7 +8,7 @@ import TabRoutes from "./tab.routes";
 
 const Stack = createNativeStackNavigator<ScreenParams>();
 
-export default function StackRoutes(){
+export default function Routes(){
   const queryClient = new QueryClient();
 
   const userIsAuth = localStorage.getItem("userIsAuth");
