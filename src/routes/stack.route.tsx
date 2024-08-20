@@ -1,6 +1,11 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import EvaProvider from '../contexts/eva.context';
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider } from '@ui-kitten/components';
+
+
 import localStorage from "../database";
 import LoginScreen from "../screens/Login";
 import { ScreenParams } from "./stack.params";
@@ -15,14 +20,18 @@ export default function Routes(){
 
   const initialRoute = userIsAuth ? "Initial" : "Login";
 
+
+
   return (
     <NavigationContainer>
-      <QueryClientProvider client={queryClient}>
-        <Stack.Navigator initialRouteName={initialRoute}  screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Initial" component={TabRoutes} />
-        </Stack.Navigator>
-      </QueryClientProvider>
+      <ApplicationProvider  {...eva} theme={eva.light}>
+        <QueryClientProvider client={queryClient}>
+          <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Initial" component={TabRoutes} />
+          </Stack.Navigator>
+        </QueryClientProvider>
+      </ApplicationProvider>
     </NavigationContainer>
   );
 }
