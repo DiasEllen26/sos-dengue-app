@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native";
 import localStorage from "../../database";
 import { NavigationProps } from "../../routes/stack.params";
 import { TouchableWithoutFeedback } from "@ui-kitten/components/devsupport";
+import { cpfMask } from "../../utils/mask";
 
 export default function LoginScreen() {
   const navigation = useNavigation<NavigationProps>();
@@ -56,7 +57,7 @@ export default function LoginScreen() {
         placeholder="Digite seu CPF"
         keyboardType="numeric"
         value={cpf}
-        onChangeText={setCpf}
+        onChangeText={value => setCpf(cpfMask(value))}
         style={{
           marginHorizontal: 28
         }}
@@ -75,11 +76,21 @@ export default function LoginScreen() {
         }}
       />
 
-      <Button
-        onPress={handleLogin}
-      >
+      <Button onPress={handleLogin}>
         <Text>Logar</Text>
       </Button>
+
+      <Text
+        category="h6"
+        style={{
+          marginVertical: 10,
+          color: "#007AFF",
+          textDecorationLine: "underline"
+        }}
+      >
+        Esqueceu sua senha?
+      </Text>
+
     </SafeAreaView>
   );
 }
