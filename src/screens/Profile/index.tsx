@@ -3,6 +3,8 @@ import { SafeAreaView, Text, TouchableOpacity } from "react-native";
 import localStorage from "../../database";
 import { NavigationProps } from "../../routes/stack.params";
 import { useNavigation } from "@react-navigation/native";
+import { Button, } from "@ui-kitten/components";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function ProfileScreen(){
   const navigation = useNavigation<NavigationProps>();
@@ -22,18 +24,17 @@ export default function ProfileScreen(){
       }}
     >
       <Text>Profile</Text>
-      <TouchableOpacity
+      <Button
         onPress={handleLogout}
         style={{
-          marginTop: 20,
-          padding: 10,
-          borderColor: "black",
-          borderWidth: 1,
-          borderRadius: 10
+          marginTop: 10
         }}
+        status="danger"
+        appearance='outline'
       >
-        <Text>Logout</Text>
-      </TouchableOpacity>
+        Logout
+      </Button>
+
     </SafeAreaView>
   );
 }
