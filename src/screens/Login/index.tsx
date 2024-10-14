@@ -1,16 +1,26 @@
+import * as Device from 'expo-device';
+import * as Application from 'expo-application';
+
 import { useNavigation } from "@react-navigation/native";
 import { Button, Icon, IconProps, Input, Text } from "@ui-kitten/components";
-import { useCallback, useEffect, useState } from "react";
+import { TouchableWithoutFeedback } from "@ui-kitten/components/devsupport";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native";
 import localStorage from "../../database";
 import { NavigationProps } from "../../routes/stack.params";
-import { TouchableWithoutFeedback } from "@ui-kitten/components/devsupport";
 import { cpfMask } from "../../utils/mask";
 
 export default function LoginScreen() {
   const navigation = useNavigation<NavigationProps>();
 
   const handleLogin = useCallback(() => {
+    const device = {
+      osName: Device.osName,
+      osVersion: Device.osVersion,
+      modelName: Device.modelName,
+      androidId: Application.getAndroidId()
+    }
+    
     localStorage.setItem("userIsAuth", true);
 
     navigation.navigate("Initial");
@@ -90,7 +100,7 @@ export default function LoginScreen() {
       >
         Esqueceu sua senha?
       </Text>
-
+      
     </SafeAreaView>
   );
 }
