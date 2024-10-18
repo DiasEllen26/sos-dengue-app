@@ -1,6 +1,6 @@
 import * as Device from 'expo-device';
 import * as Application from 'expo-application';
-import { SafeAreaView } from "react-native";
+import { Image, SafeAreaView } from "react-native";
 import { useCallback, useState } from "react";
 
 import { useNavigation } from "@react-navigation/native";
@@ -55,6 +55,18 @@ export default function LoginScreen() {
         gap: 20
       }}
     >
+
+     {/* Logo */}
+     <Image
+        source={require("../../../assets/logo.png")} 
+        style={{
+          width: 150,
+          height: 150, 
+          marginBottom: 20
+        }}
+        resizeMode="contain" 
+      />
+
       <Text
         category="h1"
         style={{
@@ -62,6 +74,7 @@ export default function LoginScreen() {
         }} 
       >Login</Text>
 
+      {/* Cpf */}
       <Input
         label="CPF"
         placeholder="Digite seu CPF"
@@ -73,6 +86,7 @@ export default function LoginScreen() {
         }}
       />
 
+      {/* Senha */}
       <Input
         label="Senha"
         placeholder="Digite sua senha"
