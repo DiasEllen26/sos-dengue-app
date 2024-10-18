@@ -6,8 +6,6 @@ import { customTheme } from './custom-theme';
 
 export default function App() {
   return (
-    <ApplicationProvider {...eva} theme={{ ...eva.light, ...customTheme }}>
-      <Routes />
-    </ApplicationProvider>
+    <Routes />
   );
 }

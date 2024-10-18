@@ -1,20 +1,20 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import EvaProvider from '../contexts/eva.context';
-import * as eva from '@eva-design/eva';
-import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
-
+import EvaProvider from "../contexts/eva.context";
+import * as eva from "@eva-design/eva";
+import { ApplicationProvider, IconRegistry } from "@ui-kitten/components";
 
 import localStorage from "../database";
 import LoginScreen from "../screens/Login";
 import { ScreenParams } from "./stack.params";
 import TabRoutes from "./tab.routes";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import RecoverPasswordScreen from "../screens/RecoverPassword";
 
 const Stack = createNativeStackNavigator<ScreenParams>();
 
-export default function Routes(){
+export default function Routes() {
   const queryClient = new QueryClient();
 
   const userIsAuth = localStorage.getItem("userIsAuth");
@@ -24,21 +24,23 @@ export default function Routes(){
   return (
     <NavigationContainer>
       <IconRegistry icons={EvaIconsPack} />
-      <ApplicationProvider  {...eva} theme={eva.light}>
+      <ApplicationProvider {...eva} theme={eva.light}>
         <QueryClientProvider client={queryClient}>
-          <Stack.Navigator 
-            initialRouteName={initialRoute} 
-            screenOptions={{ headerShown: false  }}
+          <Stack.Navigator
+            initialRouteName={initialRoute}
+            screenOptions={{ headerShown: false }}
           >
-            <Stack.Screen 
-              name="Login" 
-              component={LoginScreen} 
-              options={{ headerShown: false }} 
+            <Stack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{ headerShown: false }}
             />
-            <Stack.Screen 
-              name="Initial" 
-              component={TabRoutes} 
+            <Stack.Screen
+              name="RecoverPassword"
+              component={RecoverPasswordScreen}
+              options={{ title: "Recuperar Senha" }} 
             />
+            <Stack.Screen name="Initial" component={TabRoutes} />
           </Stack.Navigator>
         </QueryClientProvider>
       </ApplicationProvider>

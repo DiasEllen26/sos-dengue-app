@@ -27,13 +27,6 @@ export default function LoginScreen() {
 
   const handleLogin = useCallback(() => {
     setLoading(true);
-    const device = {
-      osName: Device.osName,
-      osVersion: Device.osVersion,
-      modelName: Device.modelName,
-      androidId: Application.getAndroidId(),
-    };
-
     localStorage.setItem("userIsAuth", true);
     navigation.navigate("Initial");
     setCpf("");
@@ -109,9 +102,15 @@ export default function LoginScreen() {
         {loading ? <Text>Carregando...</Text> : <Text>Logar</Text>}
       </Button>
 
-      <Text category="h6" style={styles.forgotPassword}>
-        Esqueceu sua senha?
-      </Text>
+      <Text
+  category="h6"
+  style={styles.forgotPassword}
+  onPress={() => navigation.navigate("RecoverPassword", { params: {} })}
+>
+  Esqueceu sua senha?
+</Text>
+
+
 
      
     </LinearGradient>
