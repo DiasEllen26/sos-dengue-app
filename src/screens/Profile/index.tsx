@@ -12,7 +12,7 @@ export default function ProfileScreen() {
   const [image, setImage] = useState<string | null>(null);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem("userIsAuth");
+    localStorage.clearAll();
 
     navigation.navigate("Login");
   }, [navigation]);
