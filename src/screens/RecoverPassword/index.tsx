@@ -1,18 +1,15 @@
-import { useState, useCallback } from "react";
-import { SafeAreaView, View, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { Input, Button, Text, Icon, IconProps, useTheme, ThemeType, Modal, Card, Spinner } from "@ui-kitten/components";
+import RecoverPasswordService from "./service";
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Button, Card, Icon, IconProps, Input, Modal, Spinner, Text, ThemeType, useTheme } from "@ui-kitten/components";
 import { LinearGradient } from "expo-linear-gradient";
+import { useCallback, useState } from "react";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProps } from "../../routes/stack.params";
 
-const registeredEmails = ["agente@exemplo.com"]; // Lista de e-mails cadastrados
 
-// Definindo os tipos das props
-type RecoverPasswordScreenProps = {
-  navigation: NavigationProp<any>; 
-};
-
-export default function RecoverPasswordScreen({ navigation }: RecoverPasswordScreenProps) {
+export default function RecoverPasswordScreen() {
+  const navigation = useNavigation<NavigationProps>();
   const theme: ThemeType = useTheme();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,7 +22,7 @@ export default function RecoverPasswordScreen({ navigation }: RecoverPasswordScr
     return emailRegex.test(email);
   };
 
-  const handleRecoverPassword = useCallback(() => {
+  const handleRecoverPassword = useCallback(async() => {
     if (!email) {
       setErrorMessage("O campo deve ser preenchido");
       return; // Não prossegue se o campo estiver vazio
@@ -36,13 +33,17 @@ export default function RecoverPasswordScreen({ navigation }: RecoverPasswordScr
       return; // Não prossegue se o e-mail não for válido
     }
 
-    if (!registeredEmails.includes(email)) {
-      setErrorMessage("Insira um e-mail válido");
-      return; // Mensagem se o e-mail não estiver na lista
+    setLoading(true);
+    
+    try{
+      await RecoverPasswordService.recoverPassword({ email });
+    }catch(error){
+      console.error(error);
+      setErrorMessage("Erro ao enviar e-mail");
+      return; // Não prossegue se houver erro no envio
     }
 
-    setErrorMessage(""); // Limpa mensagem de erro
-    setLoading(true);
+    setErrorMessage("");
     setTimeout(() => {
       setLoading(false);
       setModalVisible(true); // Exibe o modal após envio
@@ -103,7 +104,7 @@ export default function RecoverPasswordScreen({ navigation }: RecoverPasswordScr
         style={styles.sendButton}
         status="success" 
       >
-        <Text>Enviar Código</Text>
+        <Text>Enviar link</Text>
       </Button>
 
       <Text category="h6" style={styles.instruction}>
@@ -131,7 +132,7 @@ export default function RecoverPasswordScreen({ navigation }: RecoverPasswordScr
       >
         <Card disabled={true} style={styles.modalCard}>
           <Text category="h6" style={styles.modalText}>
-            As instruções de uso foram enviadas para o seu e-mail.
+            Solicitação recebida, se o e-mail estiver registrado, você receberá instruções de recuperação em breve.
           </Text>
           <Button onPress={handleCloseModal} style={styles.modalButton} status="success">
             Voltar

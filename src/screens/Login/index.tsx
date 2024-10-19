@@ -117,7 +117,6 @@ export default function LoginScreen() {
       <Text category="h5" style={styles.subtitle}>
         Faça seu login 
       </Text>
-
       
       {
         errorText.length > 0 && (
