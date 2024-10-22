@@ -1,7 +1,7 @@
 import * as Device from "expo-device";
 import * as Application from "expo-application";
 import { Image, View, StyleSheet } from "react-native";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   Button,
@@ -11,20 +11,21 @@ import {
   Text,
   useTheme,
   ThemeType,
-} from "@ui-kitten/components"; 
+  Spinner,
+} from "@ui-kitten/components";
 import { TouchableWithoutFeedback } from "@ui-kitten/components/devsupport";
 import { NavigationProps } from "../../routes/stack.params";
 import LoginService from "./service";
 import localStorage from "../../database";
 import { cpfMask, removeCpfMask } from "../../utils/mask";
-import { LinearGradient } from "expo-linear-gradient"; 
+import { LinearGradient } from "expo-linear-gradient";
 import { User } from "../../models/User";
 
 type LoginSuccessResponse = {
   user: User;
   token: string;
   refreshToken: string;
-}
+};
 
 type LoginFailResponse = string[] | null;
 
@@ -36,53 +37,56 @@ export default function LoginScreen() {
   const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const [errorText, setErrorText] = useState<string[]>([]);
+  const [errorText, setErrorText] = useState<string[]>([]); 
 
   const device = {
     osName: Device.osName ?? "",
     osVersion: Device.osVersion ?? "",
     modelName: Device.modelName ?? "",
-    androidId: Application.getAndroidId()
+    androidId: Application.getAndroidId(),
   };
 
   const handleLogin = useCallback(async () => {
     setLoading(true);
-    
+  
     const cpfWithoutMask = removeCpfMask(cpf);
-
+  
     const { success, data } = await LoginService.login({
       cpf: cpfWithoutMask,
       password,
-      device
-    })
-    
+      device,
+    });
+  
     setLoading(false);
-
-    if(success){
+  
+    if (success) {
       const { user, token, refreshToken } = data as LoginSuccessResponse;
-      
+  
       localStorage.setItem("userIsAuth", true);
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
       localStorage.setItem("refreshToken", refreshToken);
-
+  
       setCpf("");
       setPassword("");
-      
+  
       navigation.navigate("Initial");
-      
+  
       return;
     }
-
+  
     const errorMessages = data as LoginFailResponse;
-    
-    if(errorMessages === null){
-      setErrorText(["Não foi possível realizar o login, tente novamente!"]);
-      return
+  
+    if (errorMessages) { 
+      if (Array.isArray(errorMessages)) {
+        setErrorText(errorMessages);
+      } else {
+        setErrorText([errorMessages]);
+      }
+      return;
     }
-
-    setErrorText(errorMessages);
-
+  
+    setErrorText(["Não foi possível realizar o login, tente novamente!"]);
   }, [navigation, cpf, password]);
 
   const toggleSecureEntry = useCallback(() => {
@@ -96,12 +100,14 @@ export default function LoginScreen() {
   );
 
   const renderCpfIcon = (props: IconProps) => <Icon {...props} name="person" />;
+  const LoadingOverlay = () => (
+    <View style={styles.loadingOverlay}>
+      <Spinner size="giant" />
+    </View>
+  );
 
   return (
-    <LinearGradient
-      colors={["#ffffff", "#A9C6FF"]}
-      style={styles.container}
-    >
+    <LinearGradient colors={["#ffffff", "#A9C6FF"]} style={styles.container}>
       <Image
         source={require("../../../assets/logo.png")}
         style={styles.logo}
@@ -109,26 +115,28 @@ export default function LoginScreen() {
       />
 
       {/* Bem-vindo */}
-      <Text category="h1" style={[styles.welcomeMessage, { color: theme["color-primary-500"] }]}>
+      <Text
+        category="h1"
+        style={[styles.welcomeMessage, { color: theme["color-primary-500"] }]}
+      >
         Bem-vindo!
       </Text>
 
       {/* Login */}
       <Text category="h5" style={styles.subtitle}>
-        Faça seu login 
+        Faça seu login
       </Text>
-      
-      {
-        errorText.length > 0 && (
-          <View style={styles.errorContainer}>
-            {errorText.map((erro, index) => (
-              <Text key={index} style={styles.errorText}>
-                {erro}
-              </Text>
-            ))}
-          </View>
-        )
-      }
+
+      {/* Exibindo mensagens de erro */}
+      {errorText.length > 0 && (
+        <View style={styles.errorContainer}>
+          {errorText.map((erro, index) => (
+            <Text key={index} style={styles.errorText}>
+              {erro}
+            </Text>
+          ))}
+        </View>
+      )}
 
       <View style={styles.inputContainer}>
         {/* Cpf */}
@@ -157,8 +165,13 @@ export default function LoginScreen() {
         />
       </View>
 
-      <Button onPress={handleLogin} style={styles.loginButton} disabled={loading} status="success">
-        {loading ? <Text>Carregando...</Text> : <Text>Logar</Text>}
+      <Button
+        onPress={handleLogin}
+        style={styles.loginButton}
+        disabled={loading}
+        status="success"
+      >
+        Logar
       </Button>
 
       <Text
@@ -168,10 +181,10 @@ export default function LoginScreen() {
       >
         Esqueceu sua senha?
       </Text>
+      {loading && <LoadingOverlay />}
     </LinearGradient>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -182,21 +195,21 @@ const styles = StyleSheet.create({
   logo: {
     width: 150,
     height: 150,
-    marginBottom: 30, 
+    marginBottom: 30,
   },
   welcomeMessage: {
     marginBottom: 10,
     fontWeight: "bold",
-    fontSize: 28, 
+    fontSize: 28,
     textAlign: "center",
   },
   subtitle: {
-    marginBottom: 30, 
-    fontSize: 20, 
+    marginBottom: 30,
+    fontSize: 20,
     textAlign: "center",
   },
   inputContainer: {
-    width: '100%', 
+    width: "100%",
     marginBottom: 20,
   },
   input: {
@@ -214,7 +227,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     marginVertical: 20,
-    width: '100%', 
+    width: "100%",
     borderRadius: 10,
   },
   forgotPassword: {
@@ -222,20 +235,27 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     color: "#007AFF",
   },
-  svgContainer: {
-    position: "absolute",
-    top: 0,
-    width: "100%",
-  },
   errorContainer: {
     marginVertical: 10,
     padding: 10,
-    backgroundColor: '#f8d7da',
+    backgroundColor: "#f8d7da",
     borderRadius: 5,
+    width: '100%', 
   },
   errorText: {
-    color: '#721c24',
+    color: "#721c24",
     fontSize: 14,
     marginBottom: 5,
+  },
+  loadingOverlay: { 
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+    zIndex: 1,
   },
 });
